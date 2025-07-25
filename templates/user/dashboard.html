@@ -14,7 +14,7 @@
 
 <!-- Current Reservation -->
 {% if current_reservation %}
-    <div class="alert alert-warning">
+    <div class="current-reservation alert">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h5><i data-feather="clock" class="me-2"></i>Current Reservation</h5>
@@ -43,42 +43,34 @@
 <!-- Statistics Row -->
 <div class="row mb-4">
     <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i data-feather="map-pin" class="text-primary mb-2" style="width: 32px; height: 32px;"></i>
-                <h5 class="card-title">{{ completed_reservations|length }}</h5>
-                <p class="card-text text-muted">Completed Bookings</p>
-            </div>
+        <div class="stats-card">
+            <i data-feather="map-pin" class="text-primary mb-3" style="width: 40px; height: 40px;"></i>
+            <h5 class="card-title">{{ completed_reservations|length }}</h5>
+            <p class="card-text">Completed Bookings</p>
         </div>
     </div>
     
     <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i data-feather="dollar-sign" class="text-success mb-2" style="width: 32px; height: 32px;"></i>
-                <h5 class="card-title">${{ "%.2f"|format(completed_reservations|sum(attribute='parking_cost') or 0) }}</h5>
-                <p class="card-text text-muted">Total Spent</p>
-            </div>
+        <div class="stats-card">
+            <i data-feather="dollar-sign" class="text-success mb-3" style="width: 40px; height: 40px;"></i>
+            <h5 class="card-title">${{ "%.2f"|format(completed_reservations|sum(attribute='parking_cost') or 0) }}</h5>
+            <p class="card-text">Total Spent</p>
         </div>
     </div>
     
     <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i data-feather="clock" class="text-info mb-2" style="width: 32px; height: 32px;"></i>
-                <h5 class="card-title">{{ "%.1f"|format((completed_reservations|sum(attribute='duration_hours') or 0)) }}</h5>
-                <p class="card-text text-muted">Total Hours</p>
-            </div>
+        <div class="stats-card">
+            <i data-feather="clock" class="text-info mb-3" style="width: 40px; height: 40px;"></i>
+            <h5 class="card-title">{{ "%.1f"|format((completed_reservations|sum(attribute='duration_hours') or 0)) }}</h5>
+            <p class="card-text">Total Hours</p>
         </div>
     </div>
     
     <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <i data-feather="map" class="text-warning mb-2" style="width: 32px; height: 32px;"></i>
-                <h5 class="card-title">{{ available_lots|length }}</h5>
-                <p class="card-text text-muted">Available Lots</p>
-            </div>
+        <div class="stats-card">
+            <i data-feather="map" class="text-warning mb-3" style="width: 40px; height: 40px;"></i>
+            <h5 class="card-title">{{ available_lots|length }}</h5>
+            <p class="card-text">Available Lots</p>
         </div>
     </div>
 </div>
@@ -118,18 +110,16 @@
             <div class="row">
                 {% for lot in available_lots %}
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h6 class="card-title">{{ lot.prime_location_name }}</h6>
-                                <p class="card-text">
-                                    <small class="text-muted">{{ lot.address }}</small>
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-primary">${{ "%.2f"|format(lot.price_per_hour) }}/hr</span>
-                                    <span class="badge bg-{{ 'success' if lot.available_spots_count > 0 else 'danger' }}">
-                                        {{ lot.available_spots_count }} spots
-                                    </span>
-                                </div>
+                        <div class="parking-lot-card h-100">
+                            <h6 class="card-title mb-3" style="font-weight: 700; color: #1e293b;">{{ lot.prime_location_name }}</h6>
+                            <p class="card-text mb-3">
+                                <small class="text-muted" style="font-size: 0.8rem;">{{ lot.address }}</small>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-primary">${{ "%.2f"|format(lot.price_per_hour) }}/hr</span>
+                                <span class="badge bg-{{ 'success' if lot.available_spots_count > 0 else 'danger' }}">
+                                    {{ lot.available_spots_count }} spots
+                                </span>
                             </div>
                         </div>
                     </div>
