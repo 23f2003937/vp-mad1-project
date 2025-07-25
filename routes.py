@@ -198,9 +198,16 @@ def search_spot():
     if not spot:
         return jsonify({'error': 'Spot not found'}), 404
     
+    status_map = {
+        'A': 'Available',
+        'R': 'Reserved',
+        'O': 'Occupied'
+    }
+    
     result = {
         'spot_number': spot.spot_number,
-        'status': 'Available' if spot.status == 'A' else 'Occupied',
+        'status': status_map.get(spot.status, 'Unknown'),
+        'status_code': spot.status,
         'lot_name': spot.parking_lot.prime_location_name,
         'lot_address': spot.parking_lot.address
     }
@@ -261,12 +268,12 @@ def book_parking():
         reservation = Reservation()
         reservation.spot_id = available_spot.id
         reservation.user_id = current_user.id
-        available_spot.status = 'O'
+        available_spot.status = 'R'  # Reserved status initially
         
         db.session.add(reservation)
         db.session.commit()
         
-        flash(f'Parking spot {available_spot.spot_number} reserved successfully at {available_spot.parking_lot.prime_location_name}!', 'success')
+        flash(f'Parking spot {available_spot.spot_number} reserved successfully at {available_spot.parking_lot.prime_location_name}! Please park your vehicle and mark as occupied.', 'success')
         return redirect(url_for('user_dashboard'))
     
     return render_template('user/book_parking.html', form=form)
@@ -294,13 +301,28 @@ def book_parking_quick(lot_id):
     reservation = Reservation()
     reservation.spot_id = available_spot.id
     reservation.user_id = current_user.id
-    available_spot.status = 'O'
+    available_spot.status = 'R'  # Reserved status initially
     
     db.session.add(reservation)
     db.session.commit()
     
     lot = available_spot.parking_lot
-    flash(f'Parking spot {available_spot.spot_number} reserved successfully at {lot.prime_location_name}!', 'success')
+    flash(f'Parking spot {available_spot.spot_number} reserved successfully at {lot.prime_location_name}! Please park your vehicle and mark as occupied.', 'success')
+    return redirect(url_for('user_dashboard'))
+
+@app.route('/user/mark_parked/<int:reservation_id>')
+@login_required
+def mark_parked(reservation_id):
+    if current_user.is_admin:
+        return redirect(url_for('admin_dashboard'))
+    
+    reservation = Reservation.query.filter_by(id=reservation_id, user_id=current_user.id, leaving_timestamp=None).first_or_404()
+    
+    # Mark spot as occupied
+    reservation.parking_spot.status = 'O'
+    db.session.commit()
+    
+    flash(f'Vehicle marked as parked in spot {reservation.parking_spot.spot_number}. Billing has started.', 'success')
     return redirect(url_for('user_dashboard'))
 
 @app.route('/user/release_parking/<int:reservation_id>')

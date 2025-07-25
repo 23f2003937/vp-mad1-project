@@ -41,6 +41,10 @@ class ParkingLot(db.Model):
     def occupied_spots_count(self):
         return ParkingSpot.query.filter_by(lot_id=self.id, status='O').count()
     
+    @property
+    def reserved_spots_count(self):
+        return ParkingSpot.query.filter_by(lot_id=self.id, status='R').count()
+    
     def __repr__(self):
         return f'<ParkingLot {self.prime_location_name}>'
 
@@ -50,7 +54,7 @@ class ParkingSpot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lot_id = db.Column(db.Integer, db.ForeignKey('parking_lots.id'), nullable=False)
     spot_number = db.Column(db.String(10), nullable=False)
-    status = db.Column(db.String(1), default='A', nullable=False)  # A=Available, O=Occupied
+    status = db.Column(db.String(1), default='A', nullable=False)  # A=Available, R=Reserved, O=Occupied
     
     # Relationships
     reservations = db.relationship('Reservation', backref='parking_spot', lazy=True)

@@ -71,12 +71,20 @@
                 <h5><i data-feather="search" class="me-2"></i>Search Parking Spot</h5>
             </div>
             <div class="card-body">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="spotSearch" placeholder="Enter spot number (e.g., S001)">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="spotSearch" placeholder="Enter spot number (e.g., S001)"
+                           pattern="[Ss][0-9]{3}" title="Format: S followed by 3 digits">
                     <button class="btn btn-outline-secondary" type="button" onclick="searchSpot()">
                         <i data-feather="search"></i>
                     </button>
                 </div>
+                <div id="searchResult" class="mt-3"></div>
+                <small class="text-muted">
+                    <strong>Status:</strong> 
+                    <span class="badge bg-success">Available</span> 
+                    <span class="badge bg-warning">Reserved</span> 
+                    <span class="badge bg-danger">Occupied</span>
+                </small>
             </div>
         </div>
     </div>
