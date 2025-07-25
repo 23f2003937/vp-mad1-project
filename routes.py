@@ -21,7 +21,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password_hash, form.password.data):
+        if user and user.password_hash and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
             if user.is_admin:
                 return redirect(url_for('admin_dashboard'))
@@ -36,11 +36,11 @@ def register():
     
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            password_hash=generate_password_hash(form.password.data)
-        )
+        user = User()
+        user.username = form.username.data
+        user.email = form.email.data
+        user.password_hash = generate_password_hash(form.password.data)
+        user.is_admin = False
         db.session.add(user)
         db.session.commit()
         flash('Registration successful! Please log in.', 'success')
@@ -90,23 +90,21 @@ def create_lot():
     
     form = ParkingLotForm()
     if form.validate_on_submit():
-        lot = ParkingLot(
-            prime_location_name=form.prime_location_name.data,
-            price_per_hour=form.price_per_hour.data,
-            address=form.address.data,
-            pin_code=form.pin_code.data,
-            maximum_number_of_spots=form.maximum_number_of_spots.data
-        )
+        lot = ParkingLot()
+        lot.prime_location_name = form.prime_location_name.data
+        lot.price_per_hour = form.price_per_hour.data
+        lot.address = form.address.data
+        lot.pin_code = form.pin_code.data
+        lot.maximum_number_of_spots = form.maximum_number_of_spots.data
         db.session.add(lot)
         db.session.flush()  # Get the ID
         
         # Create parking spots
         for i in range(1, form.maximum_number_of_spots.data + 1):
-            spot = ParkingSpot(
-                lot_id=lot.id,
-                spot_number=f"S{i:03d}",
-                status='A'
-            )
+            spot = ParkingSpot()
+            spot.lot_id = lot.id
+            spot.spot_number = f"S{i:03d}"
+            spot.status = 'A'
             db.session.add(spot)
         
         db.session.commit()
@@ -139,11 +137,10 @@ def edit_lot(lot_id):
         if new_spots > current_spots:
             # Add new spots
             for i in range(current_spots + 1, new_spots + 1):
-                spot = ParkingSpot(
-                    lot_id=lot.id,
-                    spot_number=f"S{i:03d}",
-                    status='A'
-                )
+                spot = ParkingSpot()
+                spot.lot_id = lot.id
+                spot.spot_number = f"S{i:03d}"
+                spot.status = 'A'
                 db.session.add(spot)
         elif new_spots < current_spots:
             # Remove spots (only if they're available)
@@ -261,10 +258,9 @@ def book_parking():
             return redirect(url_for('book_parking'))
         
         # Create reservation
-        reservation = Reservation(
-            spot_id=available_spot.id,
-            user_id=current_user.id
-        )
+        reservation = Reservation()
+        reservation.spot_id = available_spot.id
+        reservation.user_id = current_user.id
         available_spot.status = 'O'
         
         db.session.add(reservation)
@@ -274,6 +270,38 @@ def book_parking():
         return redirect(url_for('user_dashboard'))
     
     return render_template('user/book_parking.html', form=form)
+
+@app.route('/user/book_parking_quick/<int:lot_id>', methods=['POST'])
+@login_required
+def book_parking_quick(lot_id):
+    if current_user.is_admin:
+        return redirect(url_for('admin_dashboard'))
+    
+    # Check if user already has an active reservation
+    active_reservation = Reservation.query.filter_by(user_id=current_user.id, leaving_timestamp=None).first()
+    if active_reservation:
+        flash('You already have an active parking reservation. Please release it first.', 'warning')
+        return redirect(url_for('user_dashboard'))
+    
+    # Find first available spot in selected lot
+    available_spot = ParkingSpot.query.filter_by(lot_id=lot_id, status='A').first()
+    
+    if not available_spot:
+        flash('No available spots in selected parking lot.', 'error')
+        return redirect(url_for('user_dashboard'))
+    
+    # Create reservation
+    reservation = Reservation()
+    reservation.spot_id = available_spot.id
+    reservation.user_id = current_user.id
+    available_spot.status = 'O'
+    
+    db.session.add(reservation)
+    db.session.commit()
+    
+    lot = available_spot.parking_lot
+    flash(f'Parking spot {available_spot.spot_number} reserved successfully at {lot.prime_location_name}!', 'success')
+    return redirect(url_for('user_dashboard'))
 
 @app.route('/user/release_parking/<int:reservation_id>')
 @login_required

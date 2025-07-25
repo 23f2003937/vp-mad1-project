@@ -51,12 +51,11 @@ with app.app_context():
     admin = models.User.query.filter_by(username='admin').first()
     if not admin:
         from werkzeug.security import generate_password_hash
-        admin = models.User(
-            username='admin',
-            email='admin@parking.com',
-            password_hash=generate_password_hash('admin123'),
-            is_admin=True
-        )
+        admin = models.User()
+        admin.username = 'admin'
+        admin.email = 'admin@parking.com'
+        admin.password_hash = generate_password_hash('admin123')
+        admin.is_admin = True
         db.session.add(admin)
         db.session.commit()
         logging.info("Admin user created with username: admin, password: admin123")
