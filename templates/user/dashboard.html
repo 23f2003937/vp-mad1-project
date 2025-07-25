@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - Parking Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i data-feather="activity" class="me-2"></i>My Dashboard</h2>
+    {% if not current_reservation %}
+        <a href="{{ url_for('book_parking') }}" class="btn btn-primary">
+            <i data-feather="map-pin" class="me-2"></i>Book Parking
+        </a>
+    {% endif %}
+</div>
+
+<!-- Current Reservation -->
+{% if current_reservation %}
+    <div class="alert alert-warning">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5><i data-feather="clock" class="me-2"></i>Current Reservation</h5>
+                <p class="mb-1">
+                    <strong>Spot:</strong> {{ current_reservation.parking_spot.spot_number }} at 
+                    {{ current_reservation.parking_spot.parking_lot.prime_location_name }}
+                </p>
+                <p class="mb-1">
+                    <strong>Parked Since:</strong> {{ current_reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                </p>
+                <p class="mb-0">
+                    <strong>Rate:</strong> ${{ "%.2f"|format(current_reservation.parking_spot.parking_lot.price_per_hour) }}/hour
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{{ url_for('release_parking', reservation_id=current_reservation.id) }}" 
+                   class="btn btn-danger"
+                   onclick="return confirm('Are you sure you want to release this parking spot?')">
+                    <i data-feather="log-out" class="me-2"></i>Release Spot
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Statistics Row -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i data-feather="map-pin" class="text-primary mb-2" style="width: 32px; height: 32px;"></i>
+                <h5 class="card-title">{{ completed_reservations|length }}</h5>
+                <p class="card-text text-muted">Completed Bookings</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i data-feather="dollar-sign" class="text-success mb-2" style="width: 32px; height: 32px;"></i>
+                <h5 class="card-title">${{ "%.2f"|format(completed_reservations|sum(attribute='parking_cost') or 0) }}</h5>
+                <p class="card-text text-muted">Total Spent</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i data-feather="clock" class="text-info mb-2" style="width: 32px; height: 32px;"></i>
+                <h5 class="card-title">{{ "%.1f"|format((completed_reservations|sum(attribute='duration_hours') or 0)) }}</h5>
+                <p class="card-text text-muted">Total Hours</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i data-feather="map" class="text-warning mb-2" style="width: 32px; height: 32px;"></i>
+                <h5 class="card-title">{{ available_lots|length }}</h5>
+                <p class="card-text text-muted">Available Lots</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i data-feather="bar-chart-2" class="me-2"></i>My Parking Costs</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="userCostsChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i data-feather="pie-chart" class="me-2"></i>Parking Duration</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="userDurationChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Available Parking Lots -->
+<div class="card">
+    <div class="card-header">
+        <h5><i data-feather="map" class="me-2"></i>Available Parking Lots</h5>
+    </div>
+    <div class="card-body">
+        {% if available_lots %}
+            <div class="row">
+                {% for lot in available_lots %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ lot.prime_location_name }}</h6>
+                                <p class="card-text">
+                                    <small class="text-muted">{{ lot.address }}</small>
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary">${{ "%.2f"|format(lot.price_per_hour) }}/hr</span>
+                                    <span class="badge bg-{{ 'success' if lot.available_spots_count > 0 else 'danger' }}">
+                                        {{ lot.available_spots_count }} spots
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i data-feather="map-pin" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
+                <p class="text-muted">No parking lots available.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Completed Reservations -->
+{% if completed_reservations %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5><i data-feather="list" class="me-2"></i>Recent Completed Bookings</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Spot</th>
+                            <th>Duration</th>
+                            <th>Cost</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in completed_reservations %}
+                            <tr>
+                                <td>{{ reservation.parking_spot.parking_lot.prime_location_name }}</td>
+                                <td>{{ reservation.parking_spot.spot_number }}</td>
+                                <td>{{ "%.1f"|format(reservation.duration_hours) }}h</td>
+                                <td>${{ "%.2f"|format(reservation.parking_cost) }}</td>
+                                <td>{{ reservation.leaving_timestamp.strftime('%m/%d/%Y') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center">
+                <a href="{{ url_for('my_bookings') }}" class="btn btn-outline-primary">
+                    <i data-feather="list" class="me-2"></i>View All Bookings
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Load user charts
+loadUserCharts();
+</script>
+{% endblock %}

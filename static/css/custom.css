@@ -1,0 +1,227 @@
+/* Custom styles for Parking Management System */
+
+:root {
+  --bs-font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  font-family: var(--bs-font-family-base);
+  line-height: 1.6;
+}
+
+/* Hero section styling */
+.hero-section {
+  background: linear-gradient(135deg, var(--bs-dark) 0%, var(--bs-secondary) 100%);
+  border-radius: 1rem;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+/* Card enhancements */
+.card {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Table styling */
+.table-responsive {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.table th {
+  border-top: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+/* Badge styling */
+.badge {
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+/* Button enhancements */
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Form styling */
+.form-control, .form-select {
+  border-radius: 0.5rem;
+  border: 1px solid var(--bs-border-color);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Alert styling */
+.alert {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Navigation enhancements */
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Footer styling */
+footer {
+  margin-top: auto;
+}
+
+/* Chart container styling */
+canvas {
+  max-height: 300px !important;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Dashboard statistics cards */
+.card-body h5 {
+  margin-bottom: 0.5rem;
+}
+
+.card-body .text-muted {
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2rem;
+  }
+  
+  .hero-section {
+    padding: 2rem 1rem !important;
+  }
+  
+  .btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Animation for feather icons */
+[data-feather] {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover [data-feather] {
+  transform: scale(1.1);
+}
+
+/* Status indicators */
+.status-available {
+  color: var(--bs-success);
+}
+
+.status-occupied {
+  color: var(--bs-danger);
+}
+
+/* Search functionality */
+.input-group .btn {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.input-group .form-control {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* Chart legends */
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+.chart-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 0.5rem;
+}
+
+/* Custom scrollbar for tables */
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: var(--bs-secondary-bg);
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: var(--bs-secondary);
+  border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: var(--bs-secondary-color);
+}
+
+/* Error state styling */
+.is-invalid {
+  border-color: var(--bs-danger) !important;
+}
+
+.invalid-feedback {
+  font-size: 0.875rem;
+}
+
+/* Success state styling */
+.is-valid {
+  border-color: var(--bs-success) !important;
+}
+
+.valid-feedback {
+  font-size: 0.875rem;
+  color: var(--bs-success);
+}
+
+/* Dashboard enhancements */
+.dashboard-stat-card {
+  border-left: 4px solid var(--bs-primary);
+  transition: all 0.2s ease-in-out;
+}
+
+.dashboard-stat-card:hover {
+  border-left-color: var(--bs-secondary);
+  transform: translateY(-2px);
+}

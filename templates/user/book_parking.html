@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Book Parking - User{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h4><i data-feather="map-pin" class="me-2"></i>Book Parking Spot</h4>
+            </div>
+            <div class="card-body">
+                {% if form.lot_id.choices %}
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.lot_id.label(class="form-label") }}
+                            {{ form.lot_id(class="form-select" + (" is-invalid" if form.lot_id.errors else ""), required=True) }}
+                            {% if form.lot_id.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.lot_id.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Select a parking lot to automatically reserve the first available spot.
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h6><i data-feather="info" class="me-2"></i>Booking Information</h6>
+                            <ul class="mb-0">
+                                <li>Parking spots are automatically assigned</li>
+                                <li>Billing starts immediately upon booking</li>
+                                <li>You can release the spot anytime from your dashboard</li>
+                                <li>Cost is calculated based on parking duration</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary me-md-2">
+                                <i data-feather="arrow-left" class="me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i data-feather="map-pin" class="me-2"></i>Book Parking Spot
+                            </button>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i data-feather="map-pin" class="text-muted mb-3" style="width: 64px; height: 64px;"></i>
+                        <h5 class="text-muted">No Available Parking Spots</h5>
+                        <p class="text-muted">All parking lots are currently full. Please try again later.</p>
+                        <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary">
+                            <i data-feather="arrow-left" class="me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form validation feedback
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    }
+});
+</script>
+{% endblock %}

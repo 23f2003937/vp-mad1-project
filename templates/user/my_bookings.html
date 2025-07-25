@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings - User{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i data-feather="list" class="me-2"></i>My Parking Bookings</h2>
+    <div>
+        <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary me-2">
+            <i data-feather="arrow-left" class="me-2"></i>Back to Dashboard
+        </a>
+        <a href="{{ url_for('book_parking') }}" class="btn btn-primary">
+            <i data-feather="plus-circle" class="me-2"></i>New Booking
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if reservations %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Location</th>
+                            <th>Spot Number</th>
+                            <th>Parked Time</th>
+                            <th>Released Time</th>
+                            <th>Duration</th>
+                            <th>Cost</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>
+                                    <strong>#{{ reservation.id }}</strong>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>{{ reservation.parking_spot.parking_lot.prime_location_name }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ reservation.parking_spot.parking_lot.address }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ reservation.parking_spot.spot_number }}</span>
+                                </td>
+                                <td>
+                                    <small>{{ reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                                </td>
+                                <td>
+                                    {% if reservation.leaving_timestamp %}
+                                        <small>{{ reservation.leaving_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                                    {% else %}
+                                        <span class="badge bg-warning">Still Parked</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.duration_hours %}
+                                        {{ "%.1f"|format(reservation.duration_hours) }} hours
+                                    {% else %}
+                                        <span class="text-muted">Ongoing</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.parking_cost %}
+                                        <strong>${{ "%.2f"|format(reservation.parking_cost) }}</strong>
+                                    {% else %}
+                                        <span class="text-muted">TBD</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.leaving_timestamp %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Active</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not reservation.leaving_timestamp %}
+                                        <a href="{{ url_for('release_parking', reservation_id=reservation.id) }}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Are you sure you want to release this parking spot?')">
+                                            <i data-feather="log-out" class="me-1"></i>Release
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Summary -->
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Bookings</h6>
+                            <h4 class="text-primary">{{ reservations|length }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Active Bookings</h6>
+                            <h4 class="text-warning">{{ reservations|selectattr('leaving_timestamp', 'none')|list|length }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Hours</h6>
+                            <h4 class="text-info">{{ "%.1f"|format(reservations|selectattr('duration_hours')|sum(attribute='duration_hours') or 0) }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Spent</h6>
+                            <h4 class="text-success">${{ "%.2f"|format(reservations|selectattr('parking_cost')|sum(attribute='parking_cost') or 0) }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i data-feather="map-pin" class="text-muted mb-3" style="width: 64px; height: 64px;"></i>
+                <h5 class="text-muted">No Bookings Yet</h5>
+                <p class="text-muted">You haven't made any parking reservations yet.</p>
+                <a href="{{ url_for('book_parking') }}" class="btn btn-primary">
+                    <i data-feather="plus-circle" class="me-2"></i>Make Your First Booking
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
