@@ -77,15 +77,16 @@ h6 {
 /* Admin Dashboard Table Visibility Fixes */
 .table th,
 .table td {
-  color: #1e293b !important;
-  border-color: #e2e8f0 !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: #dee2e6 !important;
 }
 
 .table thead th {
-  background-color: #f8fafc !important;
-  color: #1e293b !important;
-  font-weight: 600 !important;
-  border-bottom: 2px solid #e2e8f0 !important;
+  background-color: #f8f9fa !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #dee2e6 !important;
 }
 
 .table tbody tr {
@@ -93,16 +94,25 @@ h6 {
 }
 
 .table tbody tr:hover {
-  background-color: #f1f5f9 !important;
+  background-color: #f8f9fa !important;
+}
+
+.table tbody tr td {
+  color: #000000 !important;
+  background-color: #ffffff !important;
 }
 
 .table td strong {
-  color: #1e293b !important;
-  font-weight: 600 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+.table td small {
+  color: #495057 !important;
 }
 
 .table td small.text-muted {
-  color: #64748b !important;
+  color: #495057 !important;
 }
 
 /* Ensure card headers are visible */
@@ -114,8 +124,30 @@ h6 {
 
 /* Make badges more visible */
 .badge {
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   font-size: 0.875rem !important;
+}
+
+/* Force all table text to be black */
+.admin-dashboard .table,
+.admin-dashboard .table * {
+  color: #000000 !important;
+}
+
+.admin-dashboard .table tbody td {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Override any Bootstrap theme that might interfere */
+[data-bs-theme="dark"] .table,
+[data-bs-theme="dark"] .table th,
+[data-bs-theme="dark"] .table td,
+[data-bs-theme="light"] .table,
+[data-bs-theme="light"] .table th,
+[data-bs-theme="light"] .table td {
+  color: #000000 !important;
+  background-color: #ffffff !important;
 }
 [data-feather] {
   opacity: 1 !important;

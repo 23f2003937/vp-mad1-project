@@ -131,38 +131,38 @@
     <div class="card-header">
         <h5><i data-feather="list" class="me-2"></i>Recent Parking Lots</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body admin-dashboard">
         {% if recent_lots %}
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Location Name</th>
-                            <th>Address</th>
-                            <th>Price/Hour</th>
-                            <th>Total Spots</th>
-                            <th>Available</th>
-                            <th>Occupied</th>
-                            <th>Actions</th>
+                <table class="table table-hover" style="color: #000000 !important; background-color: #ffffff !important;">
+                    <thead style="background-color: #f8f9fa !important;">
+                        <tr style="color: #000000 !important;">
+                            <th style="color: #000000 !important; font-weight: 700;">Location Name</th>
+                            <th style="color: #000000 !important; font-weight: 700;">Address</th>
+                            <th style="color: #000000 !important; font-weight: 700;">Price/Hour</th>
+                            <th style="color: #000000 !important; font-weight: 700;">Total Spots</th>
+                            <th style="color: #000000 !important; font-weight: 700;">Available</th>
+                            <th style="color: #000000 !important; font-weight: 700;">Occupied</th>
+                            <th style="color: #000000 !important; font-weight: 700;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for lot in recent_lots %}
-                            <tr>
-                                <td>
-                                    <strong>{{ lot.prime_location_name }}</strong>
+                            <tr style="color: #000000 !important; background-color: #ffffff !important;">
+                                <td style="color: #000000 !important;">
+                                    <strong style="color: #000000 !important;">{{ lot.prime_location_name }}</strong>
                                 </td>
-                                <td>
-                                    <small class="text-muted">{{ lot.address }}</small>
+                                <td style="color: #000000 !important;">
+                                    <small style="color: #000000 !important;">{{ lot.address }}</small>
                                 </td>
-                                <td>
+                                <td style="color: #000000 !important;">
                                     <span class="badge bg-primary">${{ "%.2f"|format(lot.price) }}</span>
                                 </td>
-                                <td>{{ lot.maximum_number_of_spots }}</td>
-                                <td>
+                                <td style="color: #000000 !important;">{{ lot.maximum_number_of_spots }}</td>
+                                <td style="color: #000000 !important;">
                                     <span class="badge bg-success">{{ lot.available_spots_count }}</span>
                                 </td>
-                                <td>
+                                <td style="color: #000000 !important;">
                                     <span class="badge bg-danger">{{ lot.occupied_spots_count }}</span>
                                 </td>
                                 <td>
