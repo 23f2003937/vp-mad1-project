@@ -197,7 +197,7 @@
                                 <td>{{ reservation.parking_spot.parking_lot.prime_location_name }}</td>
                                 <td>{{ reservation.parking_spot.spot_number }}</td>
                                 <td>{{ "%.1f"|format(reservation.duration_hours) }}h</td>
-                                <td>${{ "%.2f"|format(reservation.parking_cost) }}</td>
+                                <td>${{ "%.2f"|format(reservation.total_cost or reservation.calculated_cost) }}</td>
                                 <td>{{ reservation.leaving_timestamp.strftime('%m/%d/%Y') }}</td>
                             </tr>
                         {% endfor %}
