@@ -36,8 +36,8 @@ class RegisterForm(FlaskForm):
 class ParkingLotForm(FlaskForm):
     prime_location_name = StringField('Location Name', validators=[DataRequired(), Length(min=3, max=200)],
                                      render_kw={"placeholder": "e.g., Downtown Mall", "class": "form-control", "maxlength": "200"})
-    price_per_hour = FloatField('Price per Hour', validators=[DataRequired(), NumberRange(min=0.01, max=100.00)],
-                               render_kw={"placeholder": "e.g., 2.50", "class": "form-control", "step": "0.01", "min": "0.01", "max": "100.00"})
+    price = FloatField('Price per Unit Time', validators=[DataRequired(), NumberRange(min=0.01, max=100.00)],
+                      render_kw={"placeholder": "e.g., 2.50", "class": "form-control", "step": "0.01", "min": "0.01", "max": "100.00"})
     address = TextAreaField('Address', validators=[DataRequired(), Length(min=10, max=500)],
                            render_kw={"placeholder": "Enter complete address", "class": "form-control", "rows": "3", "maxlength": "500"})
     pin_code = StringField('Pin Code', validators=[DataRequired(), Length(min=5, max=10)],
@@ -52,4 +52,4 @@ class BookParkingForm(FlaskForm):
         super(BookParkingForm, self).__init__(*args, **kwargs)
         # Populate choices with available parking lots
         lots = ParkingLot.query.all()
-        self.lot_id.choices = [(lot.id, f"{lot.prime_location_name} - ${lot.price_per_hour}/hr ({lot.available_spots_count} spots available)") for lot in lots if lot.available_spots_count > 0]
+        self.lot_id.choices = [(lot.id, f"{lot.prime_location_name} - ${lot.price}/hr ({lot.available_spots_count} spots available)") for lot in lots if lot.available_spots_count > 0]

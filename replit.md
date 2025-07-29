@@ -107,7 +107,22 @@ Preferred communication style: Simple, everyday language.
 - **Form Validation**: Comprehensive client and server-side validation
 - **Security**: Password hashing, session management, CSRF protection
 
-## Recent Enhancements (July 25, 2025)
+## Recent Enhancements (July 29, 2025)
+
+### Database Schema Update to Match User Requirements
+- **Updated ParkingLot Model**: Changed from `name` to `prime_location_name`, `hourly_rate` to `price`, added `pin_code` field
+- **Updated ParkingSpot Model**: Changed status from boolean fields to single `status` field with O/A format (O-occupied/A-available)
+- **Updated Reservation Model**: Changed from `start_time/end_time` to `parking_timestamp/leaving_timestamp`, added `parking_cost_per_unit_time` field
+- **Database Migration**: Dropped and recreated tables with new schema structure
+- **Forms and Routes Update**: Updated all forms and routes to use new field names and structure
+- **Sample Data**: Added sample parking lots with proper schema format
+
+### Enhanced UI Visibility
+- **Register Button Fix**: Changed to btn-outline-light with enhanced white styling for better visibility on gradient background
+- **Text Visibility**: Enhanced all dashboard text elements with explicit dark colors for better readability
+- **Button Styling**: Added white shadows and improved contrast for all action buttons
+
+## Previous Enhancements (July 25, 2025)
 
 ### Enhanced User Dashboard & Parking Workflow
 - **Vehicle Status Tracking**: Implemented proper 3-stage workflow: Reserve → Park → Release

@@ -92,7 +92,7 @@ def create_lot():
     if form.validate_on_submit():
         lot = ParkingLot()
         lot.prime_location_name = form.prime_location_name.data
-        lot.price_per_hour = form.price_per_hour.data
+        lot.price = form.price.data
         lot.address = form.address.data
         lot.pin_code = form.pin_code.data
         lot.maximum_number_of_spots = form.maximum_number_of_spots.data
@@ -100,12 +100,13 @@ def create_lot():
         db.session.flush()  # Get the ID
         
         # Create parking spots
-        for i in range(1, form.maximum_number_of_spots.data + 1):
-            spot = ParkingSpot()
-            spot.lot_id = lot.id
-            spot.spot_number = f"S{i:03d}"
-            spot.status = 'A'
-            db.session.add(spot)
+        if form.maximum_number_of_spots.data:
+            for i in range(1, form.maximum_number_of_spots.data + 1):
+                spot = ParkingSpot()
+                spot.lot_id = lot.id
+                spot.spot_number = f"S{i:03d}"
+                spot.status = 'A'
+                db.session.add(spot)
         
         db.session.commit()
         flash(f'Parking lot "{lot.prime_location_name}" created successfully with {lot.maximum_number_of_spots} spots!', 'success')
@@ -125,10 +126,10 @@ def edit_lot(lot_id):
     
     if form.validate_on_submit():
         current_spots = len(lot.parking_spots)
-        new_spots = form.maximum_number_of_spots.data
+        new_spots = form.maximum_number_of_spots.data or 0
         
         lot.prime_location_name = form.prime_location_name.data
-        lot.price_per_hour = form.price_per_hour.data
+        lot.price = form.price.data
         lot.address = form.address.data
         lot.pin_code = form.pin_code.data
         lot.maximum_number_of_spots = form.maximum_number_of_spots.data
@@ -301,6 +302,7 @@ def book_parking_quick(lot_id):
     reservation = Reservation()
     reservation.spot_id = available_spot.id
     reservation.user_id = current_user.id
+    reservation.parking_cost_per_unit_time = available_spot.parking_lot.price
     available_spot.status = 'R'  # Reserved status initially
     
     db.session.add(reservation)
@@ -335,14 +337,14 @@ def release_parking(reservation_id):
     
     # Update reservation
     reservation.leaving_timestamp = datetime.utcnow()
-    reservation.parking_cost = reservation.calculated_cost
+    reservation.total_cost = reservation.calculated_cost
     
     # Update spot status
     reservation.parking_spot.status = 'A'
     
     db.session.commit()
     
-    flash(f'Parking spot released successfully. Total cost: ${reservation.parking_cost:.2f}', 'success')
+    flash(f'Parking spot released successfully. Total cost: ${reservation.total_cost:.2f}', 'success')
     return redirect(url_for('user_dashboard'))
 
 @app.route('/user/my_bookings')
@@ -375,7 +377,7 @@ def admin_chart_data():
     
     for i in range(6, -1, -1):
         date = today - timedelta(days=i)
-        daily_revenue = db.session.query(func.sum(Reservation.parking_cost)).filter(
+        daily_revenue = db.session.query(func.sum(Reservation.total_cost)).filter(
             func.date(Reservation.leaving_timestamp) == date
         ).scalar() or 0
         revenue_data.append(float(daily_revenue))
@@ -406,7 +408,7 @@ def user_chart_data():
     ).order_by(Reservation.leaving_timestamp.desc()).limit(10).all()
     
     dates = [res.leaving_timestamp.strftime('%m/%d') for res in reversed(reservations)]
-    costs = [float(res.parking_cost or 0) for res in reversed(reservations)]
+    costs = [float(res.total_cost or 0) for res in reversed(reservations)]
     durations = [res.duration_hours or 0 for res in reversed(reservations)]
     
     return jsonify({

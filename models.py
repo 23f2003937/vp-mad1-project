@@ -24,7 +24,7 @@ class ParkingLot(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     prime_location_name = db.Column(db.String(200), nullable=False)
-    price_per_hour = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Float, nullable=False)  # parking_cost per unit time
     address = db.Column(db.Text, nullable=False)
     pin_code = db.Column(db.String(10), nullable=False)
     maximum_number_of_spots = db.Column(db.Integer, nullable=False)
@@ -77,7 +77,8 @@ class Reservation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     parking_timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     leaving_timestamp = db.Column(db.DateTime, nullable=True)
-    parking_cost = db.Column(db.Float, nullable=True)
+    parking_cost_per_unit_time = db.Column(db.Float, nullable=False)
+    total_cost = db.Column(db.Float, nullable=True)
     
     @property
     def duration_hours(self):
@@ -88,9 +89,16 @@ class Reservation(db.Model):
     
     @property
     def calculated_cost(self):
-        if self.duration_hours and self.parking_spot:
-            return round(self.duration_hours * self.parking_spot.parking_lot.price_per_hour, 2)
+        if self.duration_hours:
+            return round(self.duration_hours * self.parking_cost_per_unit_time, 2)
         return 0
+    
+    @property
+    def current_cost(self):
+        end_time = self.leaving_timestamp or datetime.utcnow()
+        duration = end_time - self.parking_timestamp
+        hours = duration.total_seconds() / 3600
+        return round(hours * self.parking_cost_per_unit_time, 2)
     
     def __repr__(self):
         return f'<Reservation {self.id} - User {self.user_id}>'
