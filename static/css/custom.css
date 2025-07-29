@@ -77,6 +77,62 @@ h6 {
   opacity: 1 !important;
 }
 
+/* Home page button visibility - register and login buttons */
+.hero-section .btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.hero-section .btn-primary {
+  background: #007bff !important;
+  color: white !important;
+  border: 2px solid #007bff !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  font-size: 1rem !important;
+}
+
+.hero-section .btn-outline-secondary,
+.hero-section .btn-outline-light {
+  background: transparent !important;
+  color: white !important;
+  border: 2px solid white !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  font-size: 1rem !important;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2) !important;
+}
+
+.hero-section .btn-outline-secondary:hover,
+.hero-section .btn-outline-light:hover {
+  background: white !important;
+  color: #007bff !important;
+  border: 2px solid white !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3) !important;
+}
+
+.hero-section .btn *,
+.hero-section .btn i {
+  color: inherit !important;
+}
+
+.hero-section .btn-outline-light *,
+.hero-section .btn-outline-light i {
+  color: white !important;
+}
+
+.hero-section .btn-outline-light:hover *,
+.hero-section .btn-outline-light:hover i {
+  color: #007bff !important;
+}
+
+/* Ensure all buttons in hero section are visible */
+.hero-section a {
+  text-decoration: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* Hero section styling */
 .hero-section {
   background: var(--parking-gradient);
