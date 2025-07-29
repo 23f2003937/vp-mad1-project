@@ -124,17 +124,128 @@
             fetch(`/admin/search_spot?spot_number=${encodeURIComponent(spotNumber)}`)
                 .then(response => response.json())
                 .then(data => {
+                    const resultDiv = document.getElementById('searchResult');
                     if (data.error) {
-                        alert('Error: ' + data.error);
+                        resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
                     } else {
-                        let message = `Spot: ${data.spot_number}\nStatus: ${data.status}\nLot: ${data.lot_name}\nAddress: ${data.lot_address}`;
+                        const statusClass = data.status_code === 'A' ? 'success' : (data.status_code === 'R' ? 'warning' : 'danger');
+                        let html = `
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Spot ${data.spot_number}</h6>
+                                    <p class="card-text">
+                                        <strong>Status:</strong> <span class="badge bg-${statusClass}">${data.status}</span><br>
+                                        <strong>Location:</strong> ${data.lot_name}<br>
+                                        <strong>Address:</strong> ${data.lot_address}
+                                    </p>
+                        `;
                         if (data.user) {
-                            message += `\nParked by: ${data.user}\nSince: ${data.parked_since}`;
+                            html += `<p class="card-text"><strong>Parked by:</strong> ${data.user}<br><strong>Since:</strong> ${data.parked_since}</p>`;
                         }
-                        alert(message);
+                        html += '</div></div>';
+                        resultDiv.innerHTML = html;
                     }
                 })
-                .catch(error => alert('Error searching spot'));
+                .catch(error => {
+                    document.getElementById('searchResult').innerHTML = '<div class="alert alert-danger">Error searching spot</div>';
+                });
+        }
+        
+        function searchByLot() {
+            const lotId = document.getElementById('lotSelect').value;
+            if (!lotId) return;
+            
+            fetch(`/admin/search_by_lot?lot_id=${encodeURIComponent(lotId)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('searchResult');
+                    if (data.error) {
+                        resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    } else {
+                        let html = `
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>${data.lot_name} - ${data.total_spots} spots</h6>
+                                    <small class="text-muted">${data.lot_address}</small>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                        `;
+                        
+                        data.spots.forEach(spot => {
+                            const statusClass = spot.status_code === 'A' ? 'success' : (spot.status_code === 'R' ? 'warning' : 'danger');
+                            html += `
+                                <div class="col-md-4 mb-2">
+                                    <div class="card card-sm">
+                                        <div class="card-body p-2">
+                                            <strong>${spot.spot_number}</strong>
+                                            <span class="badge bg-${statusClass} ms-2">${spot.status}</span>
+                                            ${spot.user ? `<br><small>By: ${spot.user}</small>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += '</div></div></div>';
+                        resultDiv.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('searchResult').innerHTML = '<div class="alert alert-danger">Error searching by lot</div>';
+                });
+        }
+        
+        function searchByStatus() {
+            const status = document.getElementById('statusFilter').value;
+            const lotId = document.getElementById('lotFilterStatus').value;
+            
+            let url = '/admin/search_by_status?';
+            if (status) url += `status=${encodeURIComponent(status)}&`;
+            if (lotId) url += `lot_id=${encodeURIComponent(lotId)}&`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('searchResult');
+                    if (data.error) {
+                        resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    } else {
+                        let html = `
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Search Results - ${data.total_spots} spots found</h6>
+                                </div>
+                                <div class="card-body">
+                        `;
+                        
+                        if (data.spots.length === 0) {
+                            html += '<p class="text-muted">No spots found matching the criteria.</p>';
+                        } else {
+                            html += '<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Spot</th><th>Status</th><th>Location</th><th>User</th></tr></thead><tbody>';
+                            
+                            data.spots.forEach(spot => {
+                                const statusClass = spot.status_code === 'A' ? 'success' : (spot.status_code === 'R' ? 'warning' : 'danger');
+                                html += `
+                                    <tr>
+                                        <td><strong>${spot.spot_number}</strong></td>
+                                        <td><span class="badge bg-${statusClass}">${spot.status}</span></td>
+                                        <td>${spot.lot_name}</td>
+                                        <td>${spot.user || '-'}</td>
+                                    </tr>
+                                `;
+                            });
+                            
+                            html += '</tbody></table></div>';
+                        }
+                        
+                        html += '</div></div>';
+                        resultDiv.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('searchResult').innerHTML = '<div class="alert alert-danger">Error filtering spots</div>';
+                });
         }
         {% endif %}
     </script>

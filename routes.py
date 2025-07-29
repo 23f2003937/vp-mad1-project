@@ -220,6 +220,85 @@ def search_spot():
     
     return jsonify(result)
 
+@app.route('/admin/search_by_lot')
+@login_required
+def search_by_lot():
+    if not current_user.is_admin:
+        return jsonify({'error': 'Access denied'}), 403
+    
+    lot_id = request.args.get('lot_id', '')
+    if not lot_id:
+        return jsonify({'error': 'Lot ID required'}), 400
+    
+    lot = ParkingLot.query.get(lot_id)
+    if not lot:
+        return jsonify({'error': 'Parking lot not found'}), 404
+    
+    spots = ParkingSpot.query.filter_by(lot_id=lot_id).all()
+    status_map = {'A': 'Available', 'R': 'Reserved', 'O': 'Occupied'}
+    
+    spot_data = []
+    for spot in spots:
+        spot_info = {
+            'spot_number': spot.spot_number,
+            'status': status_map.get(spot.status, 'Unknown'),
+            'status_code': spot.status
+        }
+        
+        if spot.status == 'O' and spot.current_reservation:
+            reservation = spot.current_reservation
+            spot_info['user'] = reservation.user.username
+            spot_info['parked_since'] = reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M')
+        
+        spot_data.append(spot_info)
+    
+    return jsonify({
+        'lot_name': lot.prime_location_name,
+        'lot_address': lot.address,
+        'total_spots': len(spots),
+        'spots': spot_data
+    })
+
+@app.route('/admin/search_by_status')
+@login_required
+def search_by_status():
+    if not current_user.is_admin:
+        return jsonify({'error': 'Access denied'}), 403
+    
+    status = request.args.get('status', '')
+    lot_id = request.args.get('lot_id', '')
+    
+    query = ParkingSpot.query
+    if status:
+        query = query.filter_by(status=status)
+    if lot_id:
+        query = query.filter_by(lot_id=lot_id)
+    
+    spots = query.all()
+    status_map = {'A': 'Available', 'R': 'Reserved', 'O': 'Occupied'}
+    
+    spot_data = []
+    for spot in spots:
+        spot_info = {
+            'spot_number': spot.spot_number,
+            'status': status_map.get(spot.status, 'Unknown'),
+            'status_code': spot.status,
+            'lot_name': spot.parking_lot.prime_location_name,
+            'lot_address': spot.parking_lot.address
+        }
+        
+        if spot.status == 'O' and spot.current_reservation:
+            reservation = spot.current_reservation
+            spot_info['user'] = reservation.user.username
+            spot_info['parked_since'] = reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M')
+        
+        spot_data.append(spot_info)
+    
+    return jsonify({
+        'total_spots': len(spots),
+        'spots': spot_data
+    })
+
 # User Routes
 @app.route('/user/dashboard')
 @login_required
