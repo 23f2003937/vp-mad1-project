@@ -26,7 +26,7 @@
                     <strong>Parked Since:</strong> {{ current_reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
                 </p>
                 <p class="mb-1">
-                    <strong>Rate:</strong> ${{ "%.2f"|format(current_reservation.parking_spot.parking_lot.price_per_hour) }}/hour
+                    <strong>Rate:</strong> ${{ "%.2f"|format(current_reservation.parking_spot.parking_lot.price) }}/hour
                 </p>
                 {% if current_reservation.parking_spot.status == 'O' %}
                     <p class="mb-0">
@@ -133,7 +133,7 @@
                                 <small class="text-muted" style="font-size: 0.8rem;">{{ lot.address }}</small>
                             </p>
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="badge bg-primary">${{ "%.2f"|format(lot.price_per_hour) }}/hr</span>
+                                <span class="badge bg-primary">${{ "%.2f"|format(lot.price) }}/hr</span>
                                 <span class="badge bg-{{ 'success' if lot.available_spots_count > 0 else 'danger' }}">
                                     {{ lot.available_spots_count }} spots
                                 </span>
