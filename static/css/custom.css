@@ -347,6 +347,7 @@ body {
   background: rgba(255, 255, 255, 0.95) !important;
   border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 0;
 }
 
 .navbar-brand {
@@ -376,6 +377,59 @@ body {
   background: var(--parking-gradient);
   color: white !important;
   transform: translateY(-1px);
+}
+
+/* Navigation buttons enhancement */
+.navbar .btn {
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.navbar .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .btn-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border: none;
+  color: white;
+}
+
+.navbar .btn-outline-primary {
+  border: 2px solid #007bff;
+  color: #007bff;
+  background: transparent;
+}
+
+.navbar .btn-outline-primary:hover {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Mobile responsive buttons */
+@media (max-width: 768px) {
+  .navbar .btn {
+    margin-bottom: 0.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .navbar .d-flex {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .navbar .me-2 {
+    margin-right: 0 !important;
+  }
 }
 
 .navbar-toggler {
