@@ -73,6 +73,50 @@ h6 {
 }
 
 /* Icon visibility within content */
+
+/* Admin Dashboard Table Visibility Fixes */
+.table th,
+.table td {
+  color: #1e293b !important;
+  border-color: #e2e8f0 !important;
+}
+
+.table thead th {
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.table tbody tr {
+  background-color: #ffffff !important;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.table td strong {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
+.table td small.text-muted {
+  color: #64748b !important;
+}
+
+/* Ensure card headers are visible */
+.card-header h5 {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+/* Make badges more visible */
+.badge {
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+}
 [data-feather] {
   opacity: 1 !important;
 }
