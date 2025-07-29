@@ -17,17 +17,86 @@ body {
   font-family: var(--bs-font-family-base);
   line-height: 1.6;
   background-color: #f8fafc;
+  color: #1e293b !important;
+}
+
+/* Ensure all text is visible */
+p, h1, h2, h3, h4, h5, h6, .lead, .text-muted {
+  color: inherit !important;
+}
+
+.card-body p,
+.card-body h1,
+.card-body h2,
+.card-body h3,
+.card-body h4,
+.card-body h5,
+.card-body h6 {
+  color: #1e293b !important;
+}
+
+.text-muted {
+  color: #64748b !important;
+}
+
+/* Specific text visibility for all page elements */
+.card-title {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
+.card-text {
+  color: #374151 !important;
+  line-height: 1.6 !important;
+}
+
+.list-unstyled li {
+  color: #374151 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+h6 {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
+/* Ensure feature list text is visible */
+.col-md-6 h6,
+.col-md-6 li {
+  color: #1e293b !important;
+}
+
+/* Override any Bootstrap dark theme overrides */
+[data-bs-theme="dark"] .card-body *,
+[data-bs-theme="light"] .card-body * {
+  color: #1e293b !important;
+}
+
+/* Icon visibility within content */
+[data-feather] {
+  opacity: 1 !important;
 }
 
 /* Hero section styling */
 .hero-section {
   background: var(--parking-gradient);
   border-radius: 1.5rem;
-  color: white;
+  color: white !important;
   margin-bottom: 2rem;
   box-shadow: var(--parking-card-shadow);
   position: relative;
   overflow: hidden;
+}
+
+.hero-section * {
+  color: white !important;
+}
+
+.hero-section h1,
+.hero-section p,
+.hero-section .lead {
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .hero-section::before {
