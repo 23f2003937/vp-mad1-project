@@ -381,14 +381,16 @@ body {
 
 /* Navigation buttons enhancement */
 .navbar .btn {
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
+  border-radius: 20px !important;
+  padding: 8px 16px !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  line-height: 1.5 !important;
+  min-height: 38px !important;
 }
 
 .navbar .btn:hover {
@@ -397,21 +399,23 @@ body {
 }
 
 .navbar .btn-primary {
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-  border: none;
-  color: white;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+  border: none !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
 }
 
 .navbar .btn-outline-primary {
-  border: 2px solid #007bff;
-  color: #007bff;
-  background: transparent;
+  border: 2px solid #007bff !important;
+  color: #007bff !important;
+  background: transparent !important;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1) !important;
 }
 
 .navbar .btn-outline-primary:hover {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+  background: #007bff !important;
+  color: white !important;
+  border-color: #007bff !important;
 }
 
 /* Mobile responsive buttons */
@@ -430,6 +434,66 @@ body {
   .navbar .me-2 {
     margin-right: 0 !important;
   }
+}
+
+/* Force button visibility with dark theme compatibility */
+.navbar .btn-primary,
+.navbar .btn-outline-primary {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 1000 !important;
+  position: relative !important;
+}
+
+.navbar .btn-primary {
+  background: #007bff !important;
+  color: #ffffff !important;
+  border: 2px solid #007bff !important;
+}
+
+.navbar .btn-primary:hover {
+  background: #0056b3 !important;
+  color: #ffffff !important;
+  border: 2px solid #0056b3 !important;
+}
+
+.navbar .btn-outline-primary {
+  background: transparent !important;
+  color: #007bff !important;
+  border: 2px solid #007bff !important;
+}
+
+.navbar .btn-outline-primary:hover {
+  background: #007bff !important;
+  color: #ffffff !important;
+  border: 2px solid #007bff !important;
+}
+
+.navbar .btn-primary *,
+.navbar .btn-primary i {
+  color: white !important;
+}
+
+.navbar .btn-outline-primary *,
+.navbar .btn-outline-primary i {
+  color: #007bff !important;
+}
+
+.navbar .btn-outline-primary:hover *,
+.navbar .btn-outline-primary:hover i {
+  color: white !important;
+}
+
+/* Override any conflicting Bootstrap or custom styles */
+.navbar a.btn {
+  text-decoration: none !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+.navbar a.btn:visited,
+.navbar a.btn:link {
+  color: inherit !important;
 }
 
 .navbar-toggler {
