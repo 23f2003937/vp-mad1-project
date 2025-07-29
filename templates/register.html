@@ -3,12 +3,14 @@
 {% block title %}Register - Parking Management System{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="card">
-            <div class="card-header text-center">
-                <h4><i data-feather="user-plus" class="me-2"></i>Register</h4>
-            </div>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-primary text-white">
+                    <h4 class="mb-0"><i data-feather="user-plus" class="me-2"></i>Create Your Account</h4>
+                    <small class="text-light">Join our parking management system</small>
+                </div>
             <div class="card-body">
                 <form method="POST" novalidate>
                     {{ form.hidden_tag() }}
@@ -61,17 +63,19 @@
                         {% endif %}
                     </div>
                     
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">
-                            <i data-feather="user-plus" class="me-2"></i>Register
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i data-feather="user-plus" class="me-2"></i>Create Account
                         </button>
                     </div>
                 </form>
                 
-                <hr>
-                <div class="text-center">
-                    <p class="mb-0">Already have an account? 
-                        <a href="{{ url_for('login') }}">Login here</a>
+                <div class="text-center mt-3">
+                    <p class="text-muted mb-0">Already have an account? 
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-sm">
+                            <i data-feather="log-in" class="me-1" style="width: 16px; height: 16px;"></i>
+                            Login Here
+                        </a>
                     </p>
                 </div>
             </div>
