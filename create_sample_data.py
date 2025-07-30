@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Script to create sample data for the Vehicle Parking App - V1
-This demonstrates all the functionality with SQLite database
+Create sample data for the Parking Management System
+This ensures we have a properly seeded database with test data
 """
 
 from app import app, db
@@ -12,132 +12,111 @@ import random
 
 def create_sample_data():
     with app.app_context():
-        print("Creating sample data for Vehicle Parking App - V1...")
+        print("🏗️  Creating sample data for Parking Management System...")
         
-        # Create sample parking lots
-        lots_data = [
-            {
-                'prime_location_name': 'Downtown Shopping Mall',
-                'price': 3.50,
-                'address': '123 Main Street, Downtown Area, City Center',
-                'pin_code': '12345',
-                'maximum_number_of_spots': 20
-            },
-            {
-                'prime_location_name': 'Business District Plaza',
-                'price': 5.00,
-                'address': '456 Business Avenue, Financial District',
-                'pin_code': '54321',
-                'maximum_number_of_spots': 15
-            },
-            {
-                'prime_location_name': 'Airport Terminal Parking',
-                'price': 8.00,
-                'address': '789 Airport Road, Terminal 1, International Airport',
-                'pin_code': '67890',
-                'maximum_number_of_spots': 30
-            }
-        ]
-        
-        # Create parking lots
-        created_lots = []
-        for lot_data in lots_data:
-            existing_lot = ParkingLot.query.filter_by(prime_location_name=lot_data['prime_location_name']).first()
-            if not existing_lot:
-                lot = ParkingLot(**lot_data)
-                db.session.add(lot)
-                db.session.flush()  # Get the ID
-                
-                # Create parking spots for this lot
-                for i in range(1, lot_data['maximum_number_of_spots'] + 1):
-                    spot = ParkingSpot()
-                    spot.lot_id = lot.id
-                    spot.spot_number = f"S{i:03d}"
-                    spot.status = 'A'  # All spots start as Available
-                    db.session.add(spot)
-                
-                created_lots.append(lot)
-                print(f"✓ Created lot: {lot.prime_location_name} with {lot_data['maximum_number_of_spots']} spots")
-        
-        # Create sample users
+        # Create sample users (admin is already created automatically)
         users_data = [
             {'username': 'john_doe', 'email': 'john@example.com', 'password': 'password123'},
             {'username': 'jane_smith', 'email': 'jane@example.com', 'password': 'password123'},
             {'username': 'mike_wilson', 'email': 'mike@example.com', 'password': 'password123'},
-            {'username': 'sarah_johnson', 'email': 'sarah@example.com', 'password': 'password123'}
+            {'username': 'sarah_johnson', 'email': 'sarah@example.com', 'password': 'password123'},
         ]
         
         created_users = []
         for user_data in users_data:
             existing_user = User.query.filter_by(username=user_data['username']).first()
             if not existing_user:
-                user = User()
-                user.username = user_data['username']
-                user.email = user_data['email']
-                user.password_hash = generate_password_hash(user_data['password'])
-                user.is_admin = False
+                user = User(
+                    username=user_data['username'],
+                    email=user_data['email'],
+                    password_hash=generate_password_hash(user_data['password']),
+                    is_admin=False
+                )
                 db.session.add(user)
                 created_users.append(user)
-                print(f"✓ Created user: {user.username}")
+        
+        # Create sample parking lots
+        lots_data = [
+            {
+                'prime_location_name': 'Downtown Mall',
+                'price': 2.50,
+                'address': '123 Main Street, Downtown District, Metropolitan City',
+                'pin_code': '12345',
+                'maximum_number_of_spots': 25
+            },
+            {
+                'prime_location_name': 'Business Center',
+                'price': 3.00,
+                'address': '456 Business Avenue, Corporate District, Metropolitan City',
+                'pin_code': '12346',
+                'maximum_number_of_spots': 20
+            },
+            {
+                'prime_location_name': 'Airport Terminal',
+                'price': 4.50,
+                'address': '789 Airport Boulevard, Terminal Area, Metropolitan City',
+                'pin_code': '12347',
+                'maximum_number_of_spots': 20
+            }
+        ]
+        
+        created_lots = []
+        for lot_data in lots_data:
+            existing_lot = ParkingLot.query.filter_by(prime_location_name=lot_data['prime_location_name']).first()
+            if not existing_lot:
+                lot = ParkingLot(**lot_data)
+                db.session.add(lot)
+                created_lots.append(lot)
         
         db.session.commit()
         
-        # Create some sample reservations to show occupied and reserved spots
-        if created_lots and created_users:
-            # Make some spots occupied
-            spots_to_occupy = []
-            for lot in created_lots[:2]:  # Use first 2 lots
-                available_spots = ParkingSpot.query.filter_by(lot_id=lot.id, status='A').limit(3).all()
-                spots_to_occupy.extend(available_spots)
-            
-            for i, spot in enumerate(spots_to_occupy[:4]):  # Occupy 4 spots
-                if i < len(created_users):
-                    reservation = Reservation()
-                    reservation.spot_id = spot.id
-                    reservation.user_id = created_users[i].id
-                    reservation.parking_timestamp = datetime.utcnow() - timedelta(hours=random.randint(1, 5))
-                    reservation.parking_cost_per_unit_time = spot.parking_lot.price
-                    
-                    spot.status = 'O'  # Occupied
-                    db.session.add(reservation)
-                    print(f"✓ Created active reservation: {spot.spot_number} by {created_users[i].username}")
-            
-            # Make some spots reserved
-            reserved_spots = ParkingSpot.query.filter_by(status='A').limit(2).all()
-            for i, spot in enumerate(reserved_spots):
-                if i < len(created_users):
-                    reservation = Reservation()
-                    reservation.spot_id = spot.id
-                    reservation.user_id = created_users[i].id
-                    reservation.parking_cost_per_unit_time = spot.parking_lot.price
-                    # No parking_timestamp yet (just reserved, not parked)
-                    
-                    spot.status = 'R'  # Reserved
-                    db.session.add(reservation)
-                    print(f"✓ Created reservation: {spot.spot_number} reserved by {created_users[i].username}")
+        # Create parking spots for each lot
+        for lot in created_lots:
+            for i in range(1, lot.maximum_number_of_spots + 1):
+                spot = ParkingSpot(
+                    lot_id=lot.id,
+                    spot_number=f"S{i:03d}",
+                    status='A'  # All spots start as available
+                )
+                db.session.add(spot)
         
         db.session.commit()
-        print("\n✅ Sample data created successfully!")
-        print("\nDemo Credentials:")
-        print("Admin: username=admin, password=admin123")
-        print("Users: john_doe, jane_smith, mike_wilson, sarah_johnson (all with password=password123)")
         
-        # Print summary
-        total_lots = ParkingLot.query.count()
-        total_spots = ParkingSpot.query.count()
-        total_users = User.query.filter_by(is_admin=False).count()
-        occupied_spots = ParkingSpot.query.filter_by(status='O').count()
-        reserved_spots = ParkingSpot.query.filter_by(status='R').count()
-        available_spots = ParkingSpot.query.filter_by(status='A').count()
+        # Create some sample reservations (completed ones for history)
+        if created_users and created_lots:
+            for _ in range(5):
+                user = random.choice(created_users)
+                lot = random.choice(created_lots)
+                spot = random.choice(lot.parking_spots)
+                
+                # Create a completed reservation from the past
+                start_time = datetime.utcnow() - timedelta(days=random.randint(1, 30), hours=random.randint(1, 8))
+                end_time = start_time + timedelta(hours=random.randint(1, 6))
+                duration_hours = (end_time - start_time).total_seconds() / 3600
+                total_cost = round(duration_hours * lot.price, 2)
+                
+                reservation = Reservation(
+                    spot_id=spot.id,
+                    user_id=user.id,
+                    parking_timestamp=start_time,
+                    leaving_timestamp=end_time,
+                    parking_cost_per_unit_time=lot.price,
+                    total_cost=total_cost
+                )
+                db.session.add(reservation)
         
-        print(f"\n📊 Database Summary:")
-        print(f"Total Parking Lots: {total_lots}")
-        print(f"Total Parking Spots: {total_spots}")
-        print(f"  - Available: {available_spots}")
-        print(f"  - Reserved: {reserved_spots}")
-        print(f"  - Occupied: {occupied_spots}")
-        print(f"Total Users: {total_users}")
-        print(f"Active Reservations: {Reservation.query.filter_by(leaving_timestamp=None).count()}")
+        db.session.commit()
+        
+        print("✅ Sample data created successfully!")
+        print("📊 Database now contains:")
+        print(f"   - {User.query.count()} users (including admin)")
+        print(f"   - {ParkingLot.query.count()} parking lots")
+        print(f"   - {ParkingSpot.query.count()} parking spots")
+        print(f"   - {Reservation.query.count()} reservations")
+        print()
+        print("🔑 Login credentials:")
+        print("   Admin: admin / admin123")
+        print("   Users: john_doe, jane_smith, mike_wilson, sarah_johnson / password123")
 
 if __name__ == '__main__':
     create_sample_data()

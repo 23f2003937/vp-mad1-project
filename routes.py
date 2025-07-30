@@ -144,8 +144,17 @@ def edit_lot(lot_id):
                 spot.status = 'A'
                 db.session.add(spot)
         elif new_spots < current_spots:
-            # Remove spots (only if they're available)
-            spots_to_remove = ParkingSpot.query.filter_by(lot_id=lot.id, status='A').offset(new_spots).all()
+            # Remove spots safely - only available ones, starting from highest numbered spots
+            spots_to_remove_count = current_spots - new_spots
+            spots_to_remove = ParkingSpot.query.filter_by(
+                lot_id=lot.id, 
+                status='A'
+            ).order_by(ParkingSpot.spot_number.desc()).limit(spots_to_remove_count).all()
+            
+            if len(spots_to_remove) < spots_to_remove_count:
+                flash(f'Cannot reduce to {new_spots} spots. Only {len(spots_to_remove)} spots are available for removal.', 'error')
+                return redirect(url_for('edit_lot', lot_id=lot.id))
+            
             for spot in spots_to_remove:
                 db.session.delete(spot)
         
@@ -164,10 +173,13 @@ def delete_lot(lot_id):
     
     lot = ParkingLot.query.get_or_404(lot_id)
     
-    # Check if all spots are available
-    occupied_spots = ParkingSpot.query.filter_by(lot_id=lot.id, status='O').count()
-    if occupied_spots > 0:
-        flash(f'Cannot delete "{lot.prime_location_name}". {occupied_spots} spots are still occupied.', 'error')
+    # Check if any spots are not available (occupied or reserved)
+    non_available_spots = ParkingSpot.query.filter(
+        ParkingSpot.lot_id == lot.id,
+        ParkingSpot.status.in_(['O', 'R'])
+    ).count()
+    if non_available_spots > 0:
+        flash(f'Cannot delete "{lot.prime_location_name}". {non_available_spots} spots are still occupied or reserved.', 'error')
         return redirect(url_for('admin_dashboard'))
     
     db.session.delete(lot)
@@ -344,10 +356,17 @@ def book_parking():
             flash('No available spots in selected parking lot.', 'error')
             return redirect(url_for('book_parking'))
         
+        # Get parking lot for pricing
+        parking_lot = ParkingLot.query.get(form.lot_id.data)
+        if not parking_lot:
+            flash('Parking lot not found.', 'error')
+            return redirect(url_for('book_parking'))
+        
         # Create reservation
         reservation = Reservation()
         reservation.spot_id = available_spot.id
         reservation.user_id = current_user.id
+        reservation.parking_cost_per_unit_time = parking_lot.price  # Fix: Add cost per unit time
         available_spot.status = 'R'  # Reserved status initially
         
         db.session.add(reservation)

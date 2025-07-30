@@ -44,10 +44,19 @@ with app.app_context():
     # Create all tables
     db.create_all()
     
-    # Create admin user if it doesn't exist
+    # Create admin user automatically if it doesn't exist
+    from werkzeug.security import generate_password_hash
     admin = models.User.query.filter_by(username='admin').first()
     if not admin:
-        from werkzeug.security import generate_password_hash
+        admin_user = models.User(
+            username='admin',
+            email='admin@parkingmanagement.com',
+            password_hash=generate_password_hash('admin123'),
+            is_admin=True
+        )
+        db.session.add(admin_user)
+        db.session.commit()
+        print("✅ Admin user created automatically!")
         admin = models.User()
         admin.username = 'admin'
         admin.email = 'admin@parking.com'
