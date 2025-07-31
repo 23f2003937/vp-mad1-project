@@ -4,7 +4,7 @@ Comprehensive verification of all mandatory core functionalities
 """
 
 from app import app, db
-from models import User, ParkingLot, ParkingSpot, Reservation
+from app_models import User, ParkingLot, ParkingSpot, Reservation
 import os
 
 def verify_core_functionalities():
@@ -21,7 +21,7 @@ def verify_core_functionalities():
             print('   ✓ Admin login available (username: admin, password: admin123)')
             print('   ✓ Admin automatically added when database is created')
         else:
-            print('   ❌ Admin login not found')
+            print('   Admin login not found')
         
         # Check user registration/login capability
         regular_users = User.query.filter_by(is_admin=False).count()
@@ -86,7 +86,7 @@ def verify_core_functionalities():
             if os.path.exists(file_path):
                 print(f'   ✓ {file_path} exists')
             else:
-                print(f'   ❌ {file_path} missing')
+                print(f'   {file_path} missing')
         
         print()
         print('5. DATABASE STRUCTURE VERIFICATION:')
@@ -118,8 +118,8 @@ def verify_core_functionalities():
         print('   6. ✓ Admin can delete empty lots only')
         
         print()
-        print('🎯 COMPREHENSIVE FUNCTIONALITY STATUS:')
-        print('✅ ALL CORE FUNCTIONALITIES ARE IMPLEMENTED AND WORKING')
+        print('COMPREHENSIVE FUNCTIONALITY STATUS:')
+        print('ALL CORE FUNCTIONALITIES ARE IMPLEMENTED AND WORKING')
         
         return True
 

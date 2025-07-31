@@ -4,7 +4,7 @@ Verification script for required terminologies and attributes
 """
 
 from app import app, db
-from models import User, ParkingLot, ParkingSpot, Reservation
+from app_models import User, ParkingLot, ParkingSpot, Reservation
 
 def verify_terminologies():
     with app.app_context():
@@ -25,7 +25,7 @@ def verify_terminologies():
             print(f'     Username: {admin.username}')
             print(f'     Is Admin: {admin.is_admin}')
         else:
-            print('   ❌ Admin not found')
+            print('   Admin not found')
         
         print()
         print('2. PARKING LOT MODEL:')
@@ -40,13 +40,13 @@ def verify_terminologies():
             if attr in lot_columns:
                 print(f'   ✓ {attr}')
             else:
-                print(f'   ❌ {attr} - MISSING')
+                print(f'   {attr} - MISSING')
                 all_present = False
         
         if all_present:
-            print('   ✅ ALL REQUIRED ATTRIBUTES PRESENT')
+            print('   ALL REQUIRED ATTRIBUTES PRESENT')
         else:
-            print('   ❌ SOME REQUIRED ATTRIBUTES MISSING')
+            print('   SOME REQUIRED ATTRIBUTES MISSING')
         
         # Show sample data if exists
         lots = ParkingLot.query.all()

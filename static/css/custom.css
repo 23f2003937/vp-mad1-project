@@ -72,6 +72,85 @@ h6 {
   color: #1e293b !important;
 }
 
+/* Navigation tabs styling for better visibility */
+.nav-tabs .nav-link {
+  color: #374151 !important;
+  background-color: transparent !important;
+  border: 1px solid #d1d5db !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #1e293b !important;
+  background-color: #f3f4f6 !important;
+  border-color: #9ca3af !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: #ffffff !important;
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+  font-weight: 600 !important;
+}
+
+.nav-tabs .nav-link.active:hover {
+  color: #ffffff !important;
+  background-color: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+/* Tab content text visibility */
+.tab-content {
+  color: #1e293b !important;
+}
+
+.tab-content .form-control,
+.tab-content .form-select {
+  color: #1e293b !important;
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+}
+
+.tab-content .form-control::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Search result containers */
+.search-results {
+  color: #1e293b !important;
+}
+
+.search-results .card {
+  color: #1e293b !important;
+}
+
+.search-results .table {
+  color: #1e293b !important;
+}
+
+.search-results .table td,
+.search-results .table th {
+  color: #1e293b !important;
+  background-color: transparent !important;
+}
+
+/* Badge colors for status indicators */
+.badge.bg-success {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-warning {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-danger {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
 /* Icon visibility within content */
 
 /* Admin Dashboard Table Visibility Fixes */

@@ -5,7 +5,7 @@ This ensures we have a properly seeded database with test data
 """
 
 from app import app, db
-from models import User, ParkingLot, ParkingSpot, Reservation
+from app_models import User, ParkingLot, ParkingSpot, Reservation
 from werkzeug.security import generate_password_hash
 from datetime import datetime, timedelta
 import random
@@ -107,7 +107,7 @@ def create_sample_data():
         
         db.session.commit()
         
-        print("✅ Sample data created successfully!")
+        print("Sample data created successfully!")
         print("📊 Database now contains:")
         print(f"   - {User.query.count()} users (including admin)")
         print(f"   - {ParkingLot.query.count()} parking lots")

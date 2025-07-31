@@ -33,12 +33,12 @@ login_manager.login_message = 'Please log in to access this page.'
 
 @login_manager.user_loader
 def load_user(user_id):
-    from models import User
+    from app_models import User
     return User.query.get(int(user_id))
 
 with app.app_context():
     # Import models and routes
-    import models
+    import app_models
     import routes
     
     # Create all tables
@@ -46,9 +46,9 @@ with app.app_context():
     
     # Create admin user automatically if it doesn't exist
     from werkzeug.security import generate_password_hash
-    admin = models.User.query.filter_by(username='admin').first()
+    admin = app_models.User.query.filter_by(username='admin').first()
     if not admin:
-        admin_user = models.User(
+        admin_user = app_models.User(
             username='admin',
             email='admin@parkingmanagement.com',
             password_hash=generate_password_hash('admin123'),
@@ -56,8 +56,8 @@ with app.app_context():
         )
         db.session.add(admin_user)
         db.session.commit()
-        print("✅ Admin user created automatically!")
-        admin = models.User()
+        print("Admin user created automatically!")
+        admin = app_models.User()
         admin.username = 'admin'
         admin.email = 'admin@parking.com'
         admin.password_hash = generate_password_hash('admin123')

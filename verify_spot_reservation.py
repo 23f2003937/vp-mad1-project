@@ -4,7 +4,7 @@ Verification script for Parking Spot and Reservation terminologies
 """
 
 from app import app, db
-from models import User, ParkingLot, ParkingSpot, Reservation
+from app_models import User, ParkingLot, ParkingSpot, Reservation
 
 def verify_spot_and_reservation():
     with app.app_context():
@@ -24,7 +24,7 @@ def verify_spot_and_reservation():
             if attr in spot_columns:
                 print(f'   ✓ {attr}')
             else:
-                print(f'   ❌ {attr} - MISSING')
+                print(f'   {attr} - MISSING')
                 spot_complete = False
         
         # Additional fields check
@@ -33,7 +33,7 @@ def verify_spot_and_reservation():
             print(f'   Additional fields: {additional_spot_fields}')
         
         if spot_complete:
-            print('   ✅ ALL REQUIRED PARKING SPOT ATTRIBUTES PRESENT')
+            print('   ALL REQUIRED PARKING SPOT ATTRIBUTES PRESENT')
         
         # Show sample parking spot data
         spots = ParkingSpot.query.limit(5).all()
@@ -61,7 +61,7 @@ def verify_spot_and_reservation():
             if attr in reservation_columns:
                 print(f'   ✓ {attr}')
             else:
-                print(f'   ❌ {attr} - MISSING')
+                print(f'   {attr} - MISSING')
                 reservation_complete = False
         
         # Additional fields check
@@ -70,7 +70,7 @@ def verify_spot_and_reservation():
             print(f'   Additional fields: {additional_reservation_fields}')
         
         if reservation_complete:
-            print('   ✅ ALL REQUIRED RESERVATION ATTRIBUTES PRESENT')
+            print('   ALL REQUIRED RESERVATION ATTRIBUTES PRESENT')
         
         # Show sample reservation data
         reservations = Reservation.query.limit(3).all()

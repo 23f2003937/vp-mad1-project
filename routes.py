@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from app import app, db
-from models import User, ParkingLot, ParkingSpot, Reservation
+from app_models import User, ParkingLot, ParkingSpot, Reservation
 from forms import LoginForm, RegisterForm, ParkingLotForm, BookParkingForm
 from sqlalchemy import func
 
